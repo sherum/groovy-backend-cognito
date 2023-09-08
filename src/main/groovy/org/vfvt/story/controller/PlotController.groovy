@@ -1,7 +1,10 @@
 package org.vfvt.story.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.web.bind.annotation.PatchMapping
+import com.sun.net.httpserver.Headers
+import groovy.util.logging.Slf4j
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.vfvt.story.serivce.PlotService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.vfvt.story.data.model.*
 
-
+@Slf4j
 @RestController
 @RequestMapping(path="/plot",consumes = 'application/json')
 class PlotController {
@@ -35,27 +38,31 @@ class PlotController {
         return this.plotService.getPlot(id)
     }
 
-    @PostMapping
-    Plot newPlot(@RequestBody Plot plot){
-        return this.plotService.savePlot(plot)
+    @PostMapping(path="/new")
+    Plot newPlot(@RequestBody String payload){
+        log.info("new plot ",payload)
+        String storyId = payload.substring(3)
+        log.info("adjusted story ${storyId}")
+        def plot = this.plotService.newPlot(storyId)
+        log.info("plot new ${plot}")
+        return plot
     }
 
-    @PostMapping("/plots")
-    Plot newPlot(@RequestBody List<Plot> plots){
-        List<Plot> json = mapper.readValue(plots,Plot.class)
-        println "we got this far"
-        return this.plotService.savePlots(json)
-    }
 
     @PutMapping
     boolean addPlot(@RequestBody Map<String,String> payload){
-        String storyId = payload.get("storyId")
+        String storyId = payload.get("body")
         String plotId = payload.get("plotId")
         return this.plotService.addPlotToStory(storyId,plotId)
     }
     @PutMapping("/subplot")
     Plot addSubplot(@RequestBody Map<String,String>payload){
 
+    }
+
+    @DeleteMapping(path="/{storyId}/{plotId}")
+    def deletePlot(@PathVariable String storyId, @PathVariable String plotId){
+        this.plotService.deletePlot(storyId,plotId)
     }
 
 

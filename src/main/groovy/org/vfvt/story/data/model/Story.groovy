@@ -2,6 +2,7 @@ package org.vfvt.story.data.model
 
 import groovy.transform.Canonical
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "stories")
@@ -19,7 +20,6 @@ class Story {
     String maguffin
 
     String summary
-
 
     List<Plot> plots = []
 
@@ -112,7 +112,8 @@ class Plot {
     String id
     String name
     String type
-    List<Plot> subplots = []
+    String description
+    String parentId
 
     Plot() {
         this.id = UUID.randomUUID().toString()

@@ -1,27 +1,54 @@
 package org.vfvt.story.serivce
 
+import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
 import org.vfvt.story.data.model.Plot
+import org.vfvt.story.data.model.Story
 import org.vfvt.story.data.mongo.PlotRepo
 
+@Slf4j
 @Service
 class PlotService {
 
     final PlotRepo plotRepo
     final StoryService storyService
+    Story currentStory;
 
     PlotService(PlotRepo plotRepo, StoryService storyService) {
-        this.plotRepo = plotRepo
-        this.storyService = storyService
+       this.plotRepo = plotRepo
+       this.storyService = storyService
     }
 
-    Plot getPlot(String id) {
-        return this.plotRepo.findById(id)
+    def setCurrentStory(String storyId){
+        log.info("Story id ${storyId}")
+        this.currentStory = this.storyService.getStory(storyId)
+        log.info("the current story is ${currentStory}")
     }
 
-    List<Plot> getAll() {
-        return this.plotRepo.findAll()
+
+    Plot getPlot(String storyId,String plotId) {
+        this.setCurrentStory(storyId)
+        return this.currentStory.plots.find {plot ->plot.id == plotId}
+    }
+
+    List<Plot> getAll(String storyId) {
+        this.setCurrentStory(storyId)
+        return this.currentStory.plots
+    }
+
+    Plot newPlot(String storyId){
+        this.setCurrentStory(storyId)
+        def plot = new Plot();
+        plot.name = "Plot Name"
+        plot.type = "Plot type"
+        plot.description="Plot description"
+        plot.parentId = "none"
+        log.info(plot.toString())
+      //  def newplot = this.plotRepo.insert(plot)
+        this.currentStory.plots.add(plot)
+        this.storyService.updateStory(this.currentStory)
+        log.info("Line 49 Plot service: ${this.currentStory} ")
+        return plot
     }
 
     Plot savePlot(Plot Plot) {
@@ -38,15 +65,11 @@ class PlotService {
         return this.plotRepo.saveAll (plots)
     }
 
-    boolean addPlotToStory(String storyId, String plotId) {
-        boolean savedPlot=false
+    Plot addPlotToStory(String storyId,Plot plot) {
         def story = storyService.getStory(storyId)
-        def plot = getPlot(plotId)
         story.plots.add(plot)
-        for (Plot p : story.plots){
-            if(p.id == plotId) savedPlot = true
-        }
-        return savedPlot
+        storyService.saveStory(story)
+        return plot
     }
 
     boolean addSubplot(Plot plot, Plot subplot){
@@ -58,6 +81,12 @@ class PlotService {
         def child = getPlot(childId)
         addSubplot(parent,child)
         return parent
+    }
+    def deletePlot(String storyId, String plotId){
+        Story story = getCurrentStory(storyId)
+        Plot plot = getPlot(storyId,plotId)
+        story.plots.remove(plot)
+        this.storyService.saveStory(story)
     }
 
 
