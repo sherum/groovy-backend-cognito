@@ -2,7 +2,7 @@ package org.vfvt.story.serivce
 
 import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Service
-import org.vfvt.story.data.model.Plot
+import org.vfvt.story.data.model.PlotView
 import org.vfvt.story.data.model.Story
 import org.vfvt.story.data.mongo.PlotRepo
 
@@ -26,68 +26,72 @@ class PlotService {
     }
 
 
-    Plot getPlot(String storyId,String plotId) {
+    PlotView getPlotView(String storyId, String plotId) {
         this.setCurrentStory(storyId)
         return this.currentStory.plots.find {plot ->plot.id == plotId}
     }
 
-    List<Plot> getAll(String storyId) {
+    List<PlotView> getAll(String storyId) {
         this.setCurrentStory(storyId)
         return this.currentStory.plots
     }
 
-    Plot newPlot(String storyId){
+    PlotView newPlotView(String storyId){
         this.setCurrentStory(storyId)
-        def plot = new Plot();
-        plot.name = "Plot Name"
-        plot.type = "Plot type"
-        plot.description="Plot description"
+        def plot = new PlotView();
+        plot.name = "PlotView Name"
+        plot.type = "PlotView type"
+        plot.description="PlotView description"
         plot.parentId = "none"
         log.info(plot.toString())
       //  def newplot = this.plotRepo.insert(plot)
         this.currentStory.plots.add(plot)
         this.storyService.updateStory(this.currentStory)
-        log.info("Line 49 Plot service: ${this.currentStory} ")
+        log.info("Line 49 PlotView service: ${this.currentStory} ")
         return plot
     }
 
-    Plot savePlot(Plot Plot) {
-        return this.plotRepo.save(Plot)
+    PlotView savePlotView(PlotView PlotView) {
+        return this.plotRepo.save(PlotView)
     }
 
-    Plot updatePlot(Plot plot) {
-        Plot plotOld = getPlot(plot.id)
-        plotOld = Plot
+    PlotView updatePlotView(PlotView plot) {
+        PlotView plotOld = getPlotView(plot.id)
+        plotOld = PlotView
         return this.plotRepo.save(plotOld)
     }
 
-    List<Plot> savePlots(List<Plot> plots){
+    List<PlotView> savePlotViews(List<PlotView> plots){
         return this.plotRepo.saveAll (plots)
     }
 
-    Plot addPlotToStory(String storyId,Plot plot) {
+    PlotView addPlotViewToStory(String storyId,PlotView plot) {
         def story = storyService.getStory(storyId)
         story.plots.add(plot)
         storyService.saveStory(story)
         return plot
     }
 
-    boolean addSubplot(Plot plot, Plot subplot){
+    boolean addSubplot(PlotView plot, PlotView subplot){
         return  plot.subplots.add(subplot)
     }
 
-    Plot addChildPlot(String parentId, String childId ){
-        def parent = getPlot(parentId)
-        def child = getPlot(childId)
+    PlotView addChildPlotView(String parentId, String childId ){
+        def parent = getPlotView(parentId)
+        def child = getPlotView(childId)
         addSubplot(parent,child)
         return parent
     }
-    def deletePlot(String storyId, String plotId){
-        Story story = getCurrentStory(storyId)
-        Plot plot = getPlot(storyId,plotId)
-        story.plots.remove(plot)
-        this.storyService.saveStory(story)
+    def deletePlotView(String storyId, String plotId){
+        PlotView plot = getPlotView(storyId,plotId)
+        this.currentStory.plots.remove(plot)
+        saveCurrentStory()
     }
+
+    def saveCurrentStory(){
+        this.storyService.saveStory(this.currentStory)
+    }
+
 
 
 }

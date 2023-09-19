@@ -51,6 +51,11 @@ class StoryController {
         log.info("updating...${story}")
         return this.storyService.updateStory(story)
     }
+    @PutMapping(path="/saveall")
+    Story updateAll(@RequestBody Story[] story){
+        log.info("updating...${story}")
+        return this.storyService.saveall(story)
+    }
 
     @DeleteMapping(value="/{id}")
     def deleteStory(@PathVariable String id){

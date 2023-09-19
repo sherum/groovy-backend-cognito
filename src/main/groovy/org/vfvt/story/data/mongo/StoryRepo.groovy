@@ -6,6 +6,7 @@ import org.vfvt.story.data.model.Event
 import org.vfvt.story.data.model.Location
 import org.vfvt.story.data.model.Person
 import org.vfvt.story.data.model.Plot
+import org.vfvt.story.data.model.PlotView
 import org.vfvt.story.data.model.Scene
 import org.vfvt.story.data.model.Story
 import org.vfvt.story.data.model.Thing
@@ -15,7 +16,7 @@ interface StoryRepo extends  MongoRepository<Story,String> {
 }
 
 @Repository
-interface PlotRepo extends  MongoRepository<Plot,String>{
+interface PlotRepo extends  MongoRepository<PlotView,String>{
 }
 @Repository
 interface SceneRepo extends  MongoRepository<Scene,String>{

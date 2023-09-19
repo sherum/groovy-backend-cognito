@@ -21,7 +21,7 @@ class Story {
 
     String summary
 
-    List<Plot> plots = []
+    List<PlotView> plots = []
 
 
     List<Scene> scenes = []
@@ -117,6 +117,10 @@ class Plot {
 
     Plot() {
         this.id = UUID.randomUUID().toString()
+    }
+
+    Plot findParent(List<Plot> plots){
+        Plot parent = plots.find {p -> p.id == parentId}
     }
 
 }

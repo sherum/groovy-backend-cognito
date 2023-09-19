@@ -1,10 +1,9 @@
 package org.vfvt.story.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sun.net.httpserver.Headers
+
 import groovy.util.logging.Slf4j
 import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.RequestHeader
 import org.vfvt.story.serivce.PlotService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
