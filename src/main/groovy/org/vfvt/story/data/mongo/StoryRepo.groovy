@@ -17,6 +17,7 @@ interface StoryRepo extends  MongoRepository<Story,String> {
 
 @Repository
 interface PlotRepo extends  MongoRepository<PlotView,String>{
+
 }
 @Repository
 interface SceneRepo extends  MongoRepository<Scene,String>{

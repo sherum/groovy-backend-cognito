@@ -21,17 +21,22 @@ class Story {
 
     String summary
 
+    @DBRef(lazy = true)
     List<PlotView> plots = []
 
-
+    @DBRef(lazy = true)
     List<Scene> scenes = []
 
+    @DBRef(lazy = true)
     List<Location> locations = []
 
+    @DBRef(lazy = true)
     List<Thing> things = []
 
+    @DBRef(lazy = true)
     List<Event> events = []
 
+    @DBRef(lazy = true)
     List<Person> people = []
 
     Story() {
@@ -144,12 +149,16 @@ class Scene {
 
     Location location
 
+    @DBRef(lazy = true)
     List<Plot> scenePlots = []
 
+    @DBRef(lazy = true)
     List<Thing> sceneThings = []
 
+    @DBRef(lazy = true)
     List<Event> sceneEvents = []
 
+    @DBRef(lazy = true)
     List<Person> scenePeople = []
 
     Scene() {

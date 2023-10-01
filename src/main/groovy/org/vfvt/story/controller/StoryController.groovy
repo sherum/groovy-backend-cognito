@@ -1,64 +1,58 @@
 package org.vfvt.story.controller
 
 import groovy.util.logging.Slf4j
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.vfvt.story.data.model.Story
-import org.vfvt.story.serivce.*
+import org.vfvt.story.serivce.UnifiedService
 
 @RestController
 @Slf4j
-@RequestMapping(value="/story",consumes = 'application/json')
+@RequestMapping(value = "/story", consumes = 'application/json')
 class StoryController {
 
-    final StoryService storyService
+    final UnifiedService unifiedService
 
-    StoryController(StoryService storyService1){
-        this.storyService = storyService1
+    StoryController(UnifiedService unifiedService1) {
+        unifiedService = unifiedService1
     }
 
     @GetMapping()
-    List<Story> getStories(){
-        return this.storyService.getAll()
-    }
-    @GetMapping(value="/{id}")
-    Story getStory(@PathVariable String id){
-        return this.storyService.getStory(id)
+    List<Story> getStories() {
+        return this.unifiedService.getAllStories()
     }
 
-    @PostMapping(value="/create")
-    Story createStory(@RequestBody Story story){
-        return this.storyService.saveStory(story)
+    @GetMapping(value = "/{id}")
+    Story getStory(@PathVariable String id) {
+        log.info("get story with id: $id")
+        return this.unifiedService.getStory(id)
     }
+
+//    @PostMapping(value="/create")
+//    Story createStory(@RequestBody Story story){
+//        return this.storyService.saveStory(story)
+//    }
 
     @PostMapping
-    Story newStory(){
-        def story = this.storyService.newStory()
+    Story newStory() {
+        def story = this.unifiedService.createNewStory()
         log.info("story new ${story}")
         return story
     }
 
     @PutMapping
-    Story updateStory(@RequestBody Story story){
+    Story updateStory(@RequestBody Story story) {
         log.info("updating...${story}")
-        return this.storyService.updateStory(story)
-    }
-    @PutMapping(path="/saveall")
-    Story updateAll(@RequestBody Story[] story){
-        log.info("updating...${story}")
-        return this.storyService.saveall(story)
+        return this.unifiedService.updateStory(story)
     }
 
-    @DeleteMapping(value="/{id}")
-    def deleteStory(@PathVariable String id){
-        this.storyService.deleteStory(id)
+    @PutMapping(path = "/saveall")
+    Story updateAll(@RequestBody Story[] story) {
+        log.info("updating...${story}")
+        return this.unifiedService.updateAllStories(story)
+    }
+
+    @DeleteMapping(value = "/{id}")
+    def deleteStory(@PathVariable String id) {
+        this.unifiedService.deleteStory(id)
     }
 }

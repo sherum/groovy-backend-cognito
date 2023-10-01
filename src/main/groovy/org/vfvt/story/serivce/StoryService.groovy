@@ -12,8 +12,10 @@ class StoryService {
 
     final StoryRepo storyRepo
 
-    StoryService(StoryRepo mongoRepo) {
+
+    StoryService(StoryRepo mongoRepo){
         this.storyRepo = mongoRepo
+
     }
 
     Story getStory(String id) {

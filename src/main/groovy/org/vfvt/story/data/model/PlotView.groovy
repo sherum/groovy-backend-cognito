@@ -2,6 +2,7 @@ package org.vfvt.story.data.model
 
 import groovy.transform.Canonical
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Canonical
@@ -11,12 +12,19 @@ class PlotView {
     String name
     @Id
     String id
-    String parentId
+
+    boolean topPlot
+//    String parentId
+//    String storyId
     String type
     String description
+
+    @DBRef(lazy = true)
     List<PlotView> subplots = []
 
     PlotView(){
-        this.id = UUID.randomUUID().toString()
+        id = UUID.randomUUID().toString()
+        topPlot = false
     }
+
 }

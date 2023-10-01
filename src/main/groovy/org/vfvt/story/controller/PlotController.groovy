@@ -1,67 +1,96 @@
 package org.vfvt.story.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
 import groovy.util.logging.Slf4j
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.vfvt.story.serivce.PlotService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.vfvt.story.data.model.*
+import org.springframework.web.bind.annotation.*
+import org.vfvt.story.data.model.PlotView
+import org.vfvt.story.serivce.UnifiedService
 
 @Slf4j
 @RestController
-@RequestMapping(path="/plot",consumes = 'application/json')
+@RequestMapping(path = "/plot", consumes = 'application/json')
 class PlotController {
 
-    final PlotService plotService
+    final UnifiedService unifiedService
+
 
     ObjectMapper mapper
 
-    PlotController(PlotService plotService1){
-        this.plotService = plotService1
+    PlotController( UnifiedService unifiedService) {
+        this.unifiedService = unifiedService
         this.mapper = new ObjectMapper()
     }
 
     @GetMapping()
-    List<Plot> getStories(){
-        return this.plotService.all()
-    }
-    @GetMapping("/{id}")
-    Plot getPlot(@PathVariable String id){
-        return this.plotService.getPlot(id)
+    List<PlotView> getStories() {
+        return this.unifiedService.getAllPlots()
     }
 
-    @PostMapping(path="/new")
-    Plot newPlot(@RequestBody String payload){
-        log.info("new plot ",payload)
-        String storyId = payload.substring(3)
-        log.info("adjusted story ${storyId}")
-        def plot = this.plotService.newPlot(storyId)
-        log.info("plot new ${plot}")
+    @GetMapping("/{id}")
+    PlotView getPlot(@PathVariable String id) {
+        return this.unifiedService.getPlot(id)
+    }
+
+    @PostMapping
+    PlotView newPlot() {
+        def plot = this.unifiedService.newPlot()
+        log.info("plot new $plot")
         return plot
     }
 
+//    @PostMapping(path="/newref")
+//    PlotView newPlot(@RequestBody HashMap<String,String> map) {
+//        String storyId = map.get("body").substring(3)
+//        log.info("New Ref: $storyId")
+//        def plot = this.unifiedService.addPlotViewTSotory(storyId)
+//        log.info("plot new $plot")
+//        return plot
+//    }
+
+    @PutMapping("/new")
+    PlotView topPlot() {
+        PlotView plot = newPlot()
+        plot.topPlot = true
+        return updatePlot(plot)
+    }
+
+//    @PostMapping(path = "/insert")
+//    PlotView insertPlot(@RequestBody HashMap<String, String> payload) {
+//        String storyId = payload.get("storyId")
+//        def plot = this.unifiedService.newPlotView(storyId)
+//        log.info("Controller plot inserted $plot")
+//        return plot
+//    }
 
     @PutMapping
-    boolean addPlot(@RequestBody Map<String,String> payload){
-        String storyId = payload.get("body")
-        String plotId = payload.get("plotId")
-        return this.plotService.addPlotToStory(storyId,plotId)
-    }
-    @PutMapping("/subplot")
-    Plot addSubplot(@RequestBody Map<String,String>payload){
-
+    PlotView updatePlot(@RequestBody PlotView payload) {
+        log.info("updaing plot #59 $payload")
+        return unifiedService.updatePlot(payload)
     }
 
-    @DeleteMapping(path="/{storyId}/{plotId}")
-    def deletePlot(@PathVariable String storyId, @PathVariable String plotId){
-        this.plotService.deletePlot(storyId,plotId)
+
+//    @PostMapping("/subplot")
+//    PlotView addSubplot(@RequestBody PlotView parent) {
+//        log.info("controller subplot")
+//        return unifiedService.addChildPlotView(parent)
+//
+//    }
+
+    @DeleteMapping(path = "/{plotId}/{decendents}")
+    def deletePlot(@PathVariable String plotId, @PathVariable boolean decendents) {
+        this.unifiedService.removePlot(plotId, decendents);
+    }
+
+//    @PutMapping
+//    boolean addPlot(@RequestBody Map<String,String> payload){
+//        String storyId = payload.get("body")
+//        String plotId = payload.get("plotId")
+//        return this.unifiedService.addPlotToStory(storyId,plotId)
+//    }
+
+    @DeleteMapping(path = "/{plotId}")
+    def deletePlot(@PathVariable String plotId) {
+        this.unifiedService.deletePlot(plotId)
     }
 
 
