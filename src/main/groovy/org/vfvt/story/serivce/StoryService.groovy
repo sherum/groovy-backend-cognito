@@ -42,9 +42,9 @@ class StoryService {
         return this.storyRepo.insert(story)
     }
 
-    def updateStory(Story story) {
+    Story updateStory(Story story) {
         log.info("Updating existing story ${story}")
-        this.storyRepo.save(story)
+        return this.storyRepo.save(story)
     }
 
     def updateAll(Story[] story) {
@@ -58,8 +58,8 @@ class StoryService {
         this.storyRepo.deleteById(storyId)
     }
 
-    boolean addSubplot(Story story, Plot plot) {
-        boolean stored = story.plots.add(plot)
+    boolean addSubplot(Story story, String plotId) {
+        boolean stored = story.plots.add(plotId)
         Story saved = storyRepo.save(story)
         if (story) {
             return stored

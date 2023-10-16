@@ -53,6 +53,7 @@ class StoryController {
 
     @DeleteMapping(value = "/{id}")
     def deleteStory(@PathVariable String id) {
+        log.info("deleting $id")
         this.unifiedService.deleteStory(id)
     }
 }

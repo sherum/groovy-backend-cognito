@@ -21,23 +21,23 @@ class Story {
 
     String summary
 
-    @DBRef(lazy = true)
-    List<PlotView> plots = []
 
-    @DBRef(lazy = true)
-    List<Scene> scenes = []
+    List<String> plots = []
 
-    @DBRef(lazy = true)
-    List<Location> locations = []
 
-    @DBRef(lazy = true)
-    List<Thing> things = []
+    List<String> scenes = []
 
-    @DBRef(lazy = true)
-    List<Event> events = []
 
-    @DBRef(lazy = true)
-    List<Person> people = []
+    List<String> locations = []
+
+
+    List<String> things = []
+
+
+    List<String> events = []
+
+
+    List<String> people = []
 
     Story() {
         this.id = UUID.randomUUID().toString()

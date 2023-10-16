@@ -12,9 +12,9 @@ class PlotService {
     final PlotRepo plotRepo
     final StoryService storyService
 
-    PlotService(PlotRepo plotRepo, StoryService storyService) {
+    PlotService(PlotRepo plotRepo) {
         this.plotRepo = plotRepo
-        this.storyService = storyService
+
     }
 
     PlotView getPlot(String id){
@@ -30,16 +30,10 @@ class PlotService {
 
 
     boolean addSubplot(PlotView plot, PlotView subplot) {
-        return plot.subplots.add(subplot)
+        return plot.subplots.add(subplot.id)
     }
 
-    PlotView addPlotViewToStory(String storyId) {
-        def story = storyService.getStory(storyId)
-        PlotView plotView = newPlotView()
-        story.plots.add(plotView)
-        storyService.saveStory(story)
-        return plotView
-    }
+
 
 
     /*
@@ -51,15 +45,21 @@ class PlotService {
     */
 
 
-    PlotView addChildPlotView(PlotView plotView) {
-        log.info("Presubplot $plotView")
+    PlotView addChildPlotView(PlotView parentPlot) {
+        log.info("Presubplot $parentPlot")
         def childPV = newPlotView();
-        childPV.topPlot = false
-//        childPV.parentId = plotView.id
-//        childPV.storyId = plotView.storyId
-        plotView.subplots.add(childPV)
-        log.info "post subplot $plotView"
-        return plotView
+        parentPlot.subplots.add(childPV.id)
+        log.info "post subplot $parentPlot"
+        return plotRepo.save(parentPlot)
+    }
+
+    PlotView addChildPlotView(String parentPlotId) {
+        log.info("Presubplot $parentPlotId")
+        def parent = plotRepo.findById(parentPlotId).get()
+        def childPV = newPlotView();
+        parent.subplots.add(childPV)
+        log.info "post subplot $parent"
+        return plotRepo.save(parent)
     }
 
     /* unused for now

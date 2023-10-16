@@ -69,12 +69,13 @@ class PlotController {
     }
 
 
-//    @PostMapping("/subplot")
-//    PlotView addSubplot(@RequestBody PlotView parent) {
-//        log.info("controller subplot")
-//        return unifiedService.addChildPlotView(parent)
-//
-//    }
+    @PostMapping("/subplot")
+    PlotView addSubplot(@RequestBody PlotView parent) {
+        String id = parent.id
+        log.info("controller add subplot")
+        return unifiedService.addSubplot(id)
+
+    }
 
     @DeleteMapping(path = "/{plotId}/{decendents}")
     def deletePlot(@PathVariable String plotId, @PathVariable boolean decendents) {

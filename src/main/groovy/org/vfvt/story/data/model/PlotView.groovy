@@ -14,13 +14,9 @@ class PlotView {
     String id
 
     boolean topPlot
-//    String parentId
-//    String storyId
     String type
     String description
-
-    @DBRef(lazy = true)
-    List<PlotView> subplots = []
+    List<String> subplots = []
 
     PlotView(){
         id = UUID.randomUUID().toString()

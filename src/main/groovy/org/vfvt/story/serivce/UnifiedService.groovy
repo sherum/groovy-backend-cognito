@@ -20,9 +20,6 @@ class UnifiedService {
 
     Story createNewStory() {
         Story story = storyService.newStory()
-        PlotView plotView = plotService.newPlotView()
-        story.plots.add(plotView)
-        storyService.updateStory(story)
         return story
     }
 
@@ -35,7 +32,16 @@ class UnifiedService {
     }
 
     Story updateStory(Story story){
-        storyService.updateStory(story);
+        if(story.id=='AAAA-BBBB-CCCC-DDDD'){
+            def newstory = storyService.newStory()
+            newstory.title = story.title
+            newstory.author = story.author
+            newstory.genre = story.genre
+            newstory.maguffin = story.maguffin
+            newstory.summary = story.summary
+            return storyService.updateStory(newstory)
+        }
+        return storyService.updateStory(story);
     }
 
     List<Story> updateAllStories(Story[] stories){
@@ -71,6 +77,14 @@ class UnifiedService {
 
     def deletePlot(String id){
         this.plotService.deletePlot(id)
+    }
+
+    PlotView addSubplot(PlotView parentPlot){
+        return plotService.addChildPlotView(parentPlot)
+    }
+
+    PlotView addSubplot(String parentId) {
+        return plotService.addChildPlotView(parentId)
     }
 
 
